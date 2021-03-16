@@ -2,26 +2,28 @@ Option Strict Off
 Option Explicit On
 Module modOutput
 	Sub subOutputCalendrier(ByVal iTeamNo As Short, ByRef strTitle As String, ByRef strFileName As String)
-		
-		FileOpen(1, strFileName, OpenMode.Output)
-		PrintLine(1, "<HTML><HEAD><TITLE></TITLE></HEAD>")
-		PrintLine(1, "<BODY TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & "><div id=Outline>")
-		PrintLine(1, "<CENTER><FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT></CENTER>")
-		PrintLine(1, "<BR>")
-		' PrintLine(1, "JT = Jean-Talon, 11ième, salle E")
-		PrintLine(1, "Saison 2021 de la maison.")
-		PrintLine(1, "<BR>")
-		PrintLine(1, "Utilisez le calendrier pour avoir le lien vers la réunion MS Teams ET vers votre bouton")
-		PrintLine(1, "<BR>")
-		' PrintLine(1, "RHC = Coats, 16ième, salle 3 (Ou RHC 11)")
-		'PrintLine(1, "<BR>")
-		PrintLine(1, "<BR>")
-		PrintLine(1, funGetCalendrier(iTeamNo))
-		PrintLine(1, "<BR>")
-		PrintLine(1, funGetScript())
-		PrintLine(1, "</HTML>")
-		FileClose(1)
-		
+
+		Dim file = My.Computer.FileSystem.OpenTextFileWriter(
+		strFileName, False, Text.Encoding.UTF8)
+
+		file.WriteLine("<HTML><HEAD><TITLE></TITLE></HEAD>")
+		file.WriteLine("<BODY TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & "><div id=Outline>")
+		file.WriteLine("<CENTER><FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT></CENTER>")
+		file.WriteLine("<BR>")
+		' file.WriteLine("JT = Jean-Talon, 11ième, salle E")
+		file.WriteLine("Saison 2021 de la maison.")
+		file.WriteLine("<BR>")
+		file.WriteLine("Utilisez le calendrier pour avoir le lien vers la réunion MS Teams ET vers votre bouton")
+		file.WriteLine("<BR>")
+		' file.WriteLine("RHC = Coats, 16ième, salle 3 (Ou RHC 11)")
+		'file.WriteLine("<BR>")
+		file.WriteLine("<BR>")
+		file.WriteLine(funGetCalendrier(iTeamNo))
+		file.WriteLine("<BR>")
+		file.WriteLine(funGetScript())
+		file.WriteLine("</HTML>")
+		file.Close()
+
 	End Sub
 	
 	Sub subOutputClassement(ByRef strTitle As String, ByRef strFileName As String)
@@ -47,97 +49,100 @@ Module modOutput
 
 		rsClassement = rsGetClassement()
 
-		FileOpen(1, strFileName, OpenMode.Output)
+		Dim file = My.Computer.FileSystem.OpenTextFileWriter(
+		strFileName, False, Text.Encoding.UTF8)
 
 		'début du document
-		PrintLine(1, "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
-		PrintLine(1, "<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
-		PrintLine(1, "<CENTER>")
-		PrintLine(1, "<FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT><BR><BR>")
+		file.WriteLine("<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
+		file.WriteLine("<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
+		file.WriteLine("<CENTER>")
+		file.WriteLine("<FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT><BR><BR>")
 
 		'entête du classement
 
-		PrintLine(1, "<TABLE BORDER=0 CELLSPACING=1 CELLPADDING=3>")
-		PrintLine(1, "<TR align=center bgcolor = " & COL_HEADER_COLOR & ">")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(1)) & " ROWSPAN=2 VALIGN=MIDDLE><FONT FACE=VERDANA SIZE=2 COLOR=white><B>Pos </B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(2)) & " ROWSPAN=2 VALIGN=middle ALIGN=LEFT><FONT FACE=VERDANA SIZE=2 COLOR=white><B>Équipes</B></FONT></TD>")
-		PrintLine(1, "<TD COLSPAN=8 VALIGN=middle><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Parties</B></FONT></TD>")
-		PrintLine(1, "<TD COLSPAN=3 VALIGN=middle><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Pointage</B></FONT></TD>")
-		PrintLine(1, "<TR BGCOLOR=darkcyan align=center>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(3)) & " BGCOLOR=darkcyan><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PJ</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(4)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>G</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(5)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>GP</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(6)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PN</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(7)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PP</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(8)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>P</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(9)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Pts</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(10)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>%*</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(11)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PP</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(12)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PC</B></FONT></TD>")
-		PrintLine(1, "<TD WIDTH=" & Str(ColWidth(13)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Diff</B></FONT></TD>")
-		PrintLine(1, "</TR></TABLE>")
-		PrintLine(1, "")
+		file.WriteLine("<TABLE BORDER=0 CELLSPACING=1 CELLPADDING=3>")
+		file.WriteLine("<TR align=center bgcolor = " & COL_HEADER_COLOR & ">")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(1)) & " ROWSPAN=2 VALIGN=MIDDLE><FONT FACE=VERDANA SIZE=2 COLOR=white><B>Pos </B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(2)) & " ROWSPAN=2 VALIGN=middle ALIGN=LEFT><FONT FACE=VERDANA SIZE=2 COLOR=white><B>Équipes</B></FONT></TD>")
+		file.WriteLine("<TD COLSPAN=8 VALIGN=middle><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Parties</B></FONT></TD>")
+		file.WriteLine("<TD COLSPAN=3 VALIGN=middle><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Pointage</B></FONT></TD>")
+		file.WriteLine("<TR BGCOLOR=darkcyan align=center>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(3)) & " BGCOLOR=darkcyan><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PJ</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(4)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>G</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(5)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>GP</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(6)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PN</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(7)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PP</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(8)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>P</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(9)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Pts</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(10)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>%*</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(11)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PP</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(12)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>PC</B></FONT></TD>")
+		file.WriteLine("<TD WIDTH=" & Str(ColWidth(13)) & "><FONT FACE=VERDANA SIZE=2 COLOR='FFFFFF'><B>Diff</B></FONT></TD>")
+		file.WriteLine("</TR></TABLE>")
+		file.WriteLine("")
 
-		PrintLine(1, "<TABLE BORDER=0 CELLSPACING=1 CELLPADDING=3>")
+		file.WriteLine("<TABLE BORDER=0 CELLSPACING=1 CELLPADDING=3>")
 
 		While rsClassement.Read()
 
 
 			System.Windows.Forms.Application.DoEvents()
 
-			PrintLine(1, "<TR ALIGN=CENTER BGCOLOR = white>")
-			PrintLine(1, "<TD WIDTH=30><FONT FACE=VERDANA SIZE=2 COLOR=Black>" & Trim(Str(I)) & "</FONT></TD>")
+			file.WriteLine("<TR ALIGN=CENTER BGCOLOR = white>")
+			file.WriteLine("<TD WIDTH=30><FONT FACE=VERDANA SIZE=2 COLOR=Black>" & Trim(Str(I)) & "</FONT></TD>")
 			strHREF = "<A HREF = """ & "equipe_" & Trim(Str(rsClassement(0).ToString)) & ".htm" & """  > " & rsClassement(1).ToString & "</A>"
-			PrintLine(1, "<TD WIDTH=170 ALIGN=LEFT><FONT FACE=VERDANA SIZE=2 COLOR=black>" & strHREF & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(2).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(3).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(4).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(5).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(6).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(7).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(8).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(9).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(10).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(11).ToString & "</FONT></TD>")
-			PrintLine(1, "<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(12).ToString & "</FONT></TD>")
-			PrintLine(1, "</TR>")
+			file.WriteLine("<TD WIDTH=170 ALIGN=LEFT><FONT FACE=VERDANA SIZE=2 COLOR=black>" & strHREF & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(2).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(3).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(4).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(5).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(6).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(7).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(8).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=50><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(9).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(10).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(11).ToString & "</FONT></TD>")
+			file.WriteLine("<TD WIDTH=70><FONT FACE=VERDANA SIZE=2 COLOR=black>" & rsClassement(12).ToString & "</FONT></TD>")
+			file.WriteLine("</TR>")
 
 		End While
-		PrintLine(1, "</TABLE>")
-		PrintLine(1, "<TABLE WIDTH=850 BORDER=0>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2>Trié par : 1-%, 2 -Dicoff. Ceci afin de tenir compte du nombre inégale de parties jouées.</TD></TR>")
-		PrintLine(1, "<TR><TD>&nbsp</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>G</B> : Victoire par plus de 40 pts. (4 pts)</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>GP</B>: Victoire par 40 pts ou moins. (3 pts)</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>PN</B>: Partie Nulle. (2 pts)</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>PP</B>: Défaite par 40 pts ou moins. (1 pts)</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>P</B> : Défaite par plus de 40 pts. (0 pt)</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>%</B> : C'est le pourcentage des points acquis sur les points possibles</TD></TR>")
-		PrintLine(1, "</TABLE>")
+		file.WriteLine("</TABLE>")
+		file.WriteLine("<TABLE WIDTH=850 BORDER=0>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2>Trié par : 1-%, 2 -Dicoff. Ceci afin de tenir compte du nombre inégale de parties jouées.</TD></TR>")
+		file.WriteLine("<TR><TD>&nbsp</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>G</B> : Victoire par plus de 40 pts. (4 pts)</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>GP</B>: Victoire par 40 pts ou moins. (3 pts)</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>PN</B>: Partie Nulle. (2 pts)</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>PP</B>: Défaite par 40 pts ou moins. (1 pts)</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>P</B> : Défaite par plus de 40 pts. (0 pt)</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>%</B> : C'est le pourcentage des points acquis sur les points possibles</TD></TR>")
+		file.WriteLine("</TABLE>")
 
-		FileClose(1)
+		file.Close()
 
 	End Sub
 
 	Sub subOutputCompteurs(ByRef strTitle As String, ByRef strFileName As String)
 
-		FileOpen(1, strFileName, OpenMode.Output)
+
+		Dim file = My.Computer.FileSystem.OpenTextFileWriter(
+		strFileName, False, Text.Encoding.UTF8)
 
 		'début du document
-		PrintLine(1, "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
-		PrintLine(1, "<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
-		PrintLine(1, "<CENTER>")
-		PrintLine(1, "<FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</B></FONT><BR>")
+		file.WriteLine("<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
+		file.WriteLine("<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
+		file.WriteLine("<CENTER>")
+		file.WriteLine("<FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</B></FONT><BR>")
 		'Print #1, "(Minimum de 2 parties jouées)<BR><BR>"
-		PrintLine(1, "<BR><BR>")
+		file.WriteLine("<BR><BR>")
 
-		PrintLine(1, funGetCompteurs(-1))
-		PrintLine(1, "<TABLE WIDTH=850 BORDER=0>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>*</B>* % des points tot = Points du joueur / Nombre total de points atribués aux joueurs (pas équipes) durant les parties de ce joueur. Comme ça, on tient en compte que certains questionnaires seront plus difficiles que d'autres. Il est à noter que les points possible tiennent compte de tous les parties jouées avec un même questionnaire. 10 points sont ajoutés à ""Pts Poss."" si une question est réussie dans une des deux partie (ou les deux). Par exemple, pour la série 2, si la question 1 est répondue dans la partie 1 mais pas dans la partie 2, que la question 2 est répondue dans la partie 2 seulement et que la question 3 est réussie dans les deux parties, les points possible seront de 30.</TD></TR>")
-		PrintLine(1, "<TR><TD><FONT FACE=VERDANA SIZE=2><B>Note:</B> Les questions s'adressant à l'équipe ne comptent pour aucun joueur</TD></TR>")
-		PrintLine(1, "</TABLE>")
+		file.WriteLine(funGetCompteurs(-1))
+		file.WriteLine("<TABLE WIDTH=850 BORDER=0>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>*</B>* % des points tot = Points du joueur / Nombre total de points atribués aux joueurs (pas équipes) durant les parties de ce joueur. Comme ça, on tient en compte que certains questionnaires seront plus difficiles que d'autres. Il est à noter que les points possible tiennent compte de tous les parties jouées avec un même questionnaire. 10 points sont ajoutés à ""Pts Poss."" si une question est réussie dans une des deux partie (ou les deux). Par exemple, pour la série 2, si la question 1 est répondue dans la partie 1 mais pas dans la partie 2, que la question 2 est répondue dans la partie 2 seulement et que la question 3 est réussie dans les deux parties, les points possible seront de 30.</TD></TR>")
+		file.WriteLine("<TR><TD><FONT FACE=VERDANA SIZE=2><B>Note:</B> Les questions s'adressant à l'équipe ne comptent pour aucun joueur</TD></TR>")
+		file.WriteLine("</TABLE>")
 
-		FileClose(1)
+		file.Close()
 
 	End Sub
 
@@ -490,23 +495,26 @@ Module modOutput
 
 	Sub subOutputEquipe(ByVal iTeamNo As Short, ByRef strTitle As String, ByRef strFileName As String)
 
-		FileOpen(1, strFileName, OpenMode.Output)
-		PrintLine(1, "<HTML><HEAD><TITLE></TITLE></HEAD>")
-		PrintLine(1, "<BODY TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & "><div id=Outline>")
-		PrintLine(1, "<CENTER><FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT></CENTER>")
-		PrintLine(1, "<BR><BR>")
-		PrintLine(1, "<FONT FACE=VERDANA COLOR = black SIZE=4><B>calendrier</FONT><BR>")
-		PrintLine(1, "<BR>")
 
-		PrintLine(1, funGetCalendrier(iTeamNo))
-		PrintLine(1, "<BR><BR>")
-		PrintLine(1, "<FONT FACE=VERDANA COLOR = black SIZE=4><B>joueurs</FONT><BR>")
-		PrintLine(1, "<BR>")
-		PrintLine(1, funGetCompteurs(iTeamNo))
-		PrintLine(1, "<BR>")
-		PrintLine(1, funGetScript())
-		PrintLine(1, "</HTML>")
-		FileClose(1)
+		Dim file = My.Computer.FileSystem.OpenTextFileWriter(
+		strFileName, False, Text.Encoding.UTF8)
+
+		file.WriteLine("<HTML><HEAD><TITLE></TITLE></HEAD>")
+		file.WriteLine("<BODY TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & "><div id=Outline>")
+		file.WriteLine("<CENTER><FONT FACE=VERDANA COLOR = black SIZE=5><B>" & strTitle & "</FONT></CENTER>")
+		file.WriteLine("<BR><BR>")
+		file.WriteLine("<FONT FACE=VERDANA COLOR = black SIZE=4><B>calendrier</FONT><BR>")
+		file.WriteLine("<BR>")
+
+		file.WriteLine(funGetCalendrier(iTeamNo))
+		file.WriteLine("<BR><BR>")
+		file.WriteLine("<FONT FACE=VERDANA COLOR = black SIZE=4><B>joueurs</FONT><BR>")
+		file.WriteLine("<BR>")
+		file.WriteLine(funGetCompteurs(iTeamNo))
+		file.WriteLine("<BR>")
+		file.WriteLine(funGetScript())
+		file.WriteLine("</HTML>")
+		file.Close()
 	End Sub
 
 	Private Function funGetScript() As Object
@@ -621,36 +629,38 @@ Module modOutput
 
 		rsQuest = rsGetQuest(intQuestNo)
 
-		FileOpen(1, strFileName, OpenMode.Output)
+		Dim file = My.Computer.FileSystem.OpenTextFileWriter(
+		strFileName, False, Text.Encoding.UTF8)
+
 
 		'début du document
-		PrintLine(1, "<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
-		PrintLine(1, "<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
-		PrintLine(1, "<CENTER>")
-		PrintLine(1, "<FONT FACE=VERDANA COLOR = black SIZE=5></FONT><BR>test<BR>")
-		PrintLine(1, "</CENTER>")
+		file.WriteLine("<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN><HTML><HEAD><TITLE></TITLE>")
+		file.WriteLine("<body TOPMARGIN=10 BGPROPERTIES=""FIXED"" BGCOLOR = " & DOC_BACKGROUND_COLOR & ">")
+		file.WriteLine("<CENTER>")
+		file.WriteLine("<FONT FACE=VERDANA COLOR = black SIZE=5></FONT><BR>test<BR>")
+		file.WriteLine("</CENTER>")
 
 		rsQuest.MoveFirst()
 		I = 1
 		While Not rsQuest.EOF
 			System.Windows.Forms.Application.DoEvents()
-			
+
 			'entête de la série
-			PrintLine(1, "<TABLE BORDER=0 CELLSPACING=1 CELLPADING=3>")
-			PrintLine(1, "<TR BGCOLOR=darkCyan><TD COLSPAN=2><FONT FACE=VERDANA SIZE=4 COLOR=White><B><I>Série " & rsQuest.Fields(8).Value & "</I></B></TD>")
-			PrintLine(1, "<TD COLSPAN=1><FONT FACE=VERDANA SIZE=3 COLOR=White><B><I>" & rsQuest.Fields(9).Value & "</I></B></TD></TR>")
-			PrintLine(1, "<TR BGCOLOR=darkCyan><TD COLSPAN=2><FONT FACE=VERDANA SIZE=2 COLOR=White><B></B></TD>")
-			PrintLine(1, "<TD COLSPAN=1><FONT FACE=VERDANA SIZE=2 COLOR=White><B>" & rsQuest.Fields(10).Value & "</B></TD></TR>")
-			PrintLine(1, "</TABLE>")
-			PrintLine(1, "<BR>")
-			
+			file.WriteLine("<TABLE BORDER=0 CELLSPACING=1 CELLPADING=3>")
+			file.WriteLine("<TR BGCOLOR=darkCyan><TD COLSPAN=2><FONT FACE=VERDANA SIZE=4 COLOR=White><B><I>Série " & rsQuest.Fields(8).Value & "</I></B></TD>")
+			file.WriteLine("<TD COLSPAN=1><FONT FACE=VERDANA SIZE=3 COLOR=White><B><I>" & rsQuest.Fields(9).Value & "</I></B></TD></TR>")
+			file.WriteLine("<TR BGCOLOR=darkCyan><TD COLSPAN=2><FONT FACE=VERDANA SIZE=2 COLOR=White><B></B></TD>")
+			file.WriteLine("<TD COLSPAN=1><FONT FACE=VERDANA SIZE=2 COLOR=White><B>" & rsQuest.Fields(10).Value & "</B></TD></TR>")
+			file.WriteLine("</TABLE>")
+			file.WriteLine("<BR>")
+
 			I = I + 1
 			rsQuest.MoveNext()
 		End While
-		
+
 		'Print #1, "</TABLE>"
-		
-		FileClose(1)
-		
+
+		file.Close()
+
 	End Sub
 End Module
